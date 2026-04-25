@@ -1,64 +1,76 @@
-# knight.py
+"""Knight piece implementation for Chess.
 
-# Import sys and os.path modules
+This module defines the Knight class, which inherits from the base Piece class
+and implements knight-specific movement logic and asset management.
+"""
+
 import sys
 from os.path import abspath, dirname
 
-# Get the directory where the file is located
+# Resolve directories for absolute imports
 currentDir = dirname(abspath(__file__))
-
-# Get the parent directory
 parentDir = dirname(currentDir)
-
-# Add the parent directory to the sys.path list
 sys.path.append(currentDir)
 
-# Import the Piece class from the piece module
 from piece import Piece
 
-# Inherit from the Piece class to create the Knight class
 class Knight(Piece):
-    def __init__(self, color, coordinate, isAlive):
-        # Call the __init__ method of the Piece class
-        super().__init__(color, coordinate, isAlive)
+    """Represents a Knight chess piece.
 
+    Attributes:
+        type (str): The piece type ('Knight').
+        iconPath (str): Path to the piece's icon asset.
+    """
+
+    def __init__(self, color, coordinate, isAlive):
+        """Initializes a Knight piece with color, coordinate, and survival status.
+
+        Args:
+            color (str): The color of the piece ('white' or 'black').
+            coordinate (str): The initial board coordinate (e.g., 'b1').
+            isAlive (bool): Initial survival status.
+        """
+        super().__init__(color, coordinate, isAlive)
         self.type = "Knight"
-        # Determine the icon path for the piece
         self.iconPath = "./assets/"
 
-        # Set the icon path based on the color of the piece
+        # Assign the appropriate icon based on piece color
         if self.color == "white":
             self.iconPath += "whiteKnight.png"
         else:
             self.iconPath += "blackKnight.png"
 
     def moveableCoors(self, board):
-        # Get the current coordinates of the knight
+        """Calculates valid moves for the Knight (L-shaped jumps).
+
+        Args:
+            board (dict): The current game board state.
+
+        Returns:
+            list: A list of reachable coordinates.
+        """
         coor = self.coordinate
         x = coor[0]
         y = coor[1]
 
-        # Define lists for the x and y coordinates
         xList = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
         yList = ["1", "2", "3", "4", "5", "6", "7", "8"]
 
-        # List to store movable coordinates
         moveableCoordinates = []
 
-        # Iterate over possible knight movements
+        # Iterate over all possible knight jump combinations
         for i in [-2, -1, 1, 2]:
             for j in [-2, -1, 1, 2]:
-                # Check if the movement is L-shaped
+                # Ensure the movement is strictly L-shaped (2 squares one way, 1 square the other)
                 if abs(i) != abs(j):
                     xIndex = xList.index(x)
                     yIndex = yList.index(y)
 
-                    # Check if the new coordinates are within the board boundaries
-                    if xIndex + i < 8 and xIndex + i >= 0 and yIndex + j < 8 and yIndex + j >= 0:
-                        # Calculate the new coordinates
+                    # Check board boundaries
+                    if 0 <= xIndex + i < 8 and 0 <= yIndex + j < 8:
                         moveableCoordinate = xList[xIndex + i] + yList[yIndex + j]
 
-                        # Check if the target position is empty or has an opponent's piece
+                        # Target must be empty or contain an opponent's piece
                         if board[moveableCoordinate]["piece"] == None:
                             moveableCoordinates.append(moveableCoordinate)
                         else:
@@ -68,3 +80,4 @@ class Knight(Piece):
                     continue
 
         return moveableCoordinates
+

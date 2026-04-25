@@ -1,13 +1,38 @@
+"""Base class for all chess pieces.
+
+This module defines the Piece class, which contains shared attributes and common
+movement logic (orthogonal and diagonal) used by multiple chess piece types.
+"""
+
 class Piece:
+    """Base class representing a chess piece.
+
+    Attributes:
+        color (str): The color of the piece ('white' or 'black').
+        coordinate (str): The current board coordinate of the piece (e.g., 'a1').
+        isAlive (bool): Whether the piece is still on the board.
+    """
+
     def __init__(self, color, coordinate, isAlive):
-        # Initialize basic attributes of a chess piece
+        """Initializes a chess piece with color, coordinate, and survival status.
+
+        Args:
+            color (str): The color of the piece.
+            coordinate (str): The initial coordinate.
+            isAlive (bool): Initial survival status.
+        """
         self.color = color
         self.coordinate = coordinate
         self.isAlive = isAlive
     
     def checkDiagonal(self, board):
-        """
-        Calculate diagonal moveable coordinates for the piece.
+        """Calculates all available diagonal coordinates for the piece.
+
+        Args:
+            board (dict): The current game board state.
+
+        Returns:
+            list: A list of reachable diagonal coordinates.
         """
         coor = self.coordinate
         x = coor[0]
@@ -18,8 +43,8 @@ class Piece:
         yIndex = yList.index(y)
         moveableCoordinates = []
 
-        # i changes the derivative of the row
-        # j changes the derivative of the column
+        # i changes the file (row derivative)
+        # j changes the rank (column derivative)
         for i in [1, -1]:
             for j in [1, -1]:
                 col = yIndex
@@ -30,11 +55,12 @@ class Piece:
                     step = -1
                     stop = 0
                 for row in range(xIndex, stop, step):
-                    if col + j < 8 and col + j >= 0: 
+                    if 0 <= col + j < 8: 
                         moveableCoordinate = xList[row + i] + yList[col + j]
                         if board[moveableCoordinate]["piece"] == None:
                             moveableCoordinates.append(moveableCoordinate)
                         else:
+                            # Capture enemy piece but stop further movement
                             if board[moveableCoordinate]["piece"].color != self.color:
                                 moveableCoordinates.append(moveableCoordinate)
                             break
@@ -42,8 +68,13 @@ class Piece:
         return moveableCoordinates
     
     def checkOrthogonal(self, board):
-        """
-        Calculate orthogonal moveable coordinates for the piece.
+        """Calculates all available orthogonal (vertical and horizontal) coordinates.
+
+        Args:
+            board (dict): The current game board state.
+
+        Returns:
+            list: A list of reachable orthogonal coordinates.
         """
         coor = self.coordinate
         x = coor[0]
@@ -52,7 +83,7 @@ class Piece:
         yList = ["1", "2", "3", "4", "5", "6", "7", "8"]
         moveableCoordinates = []    
 
-        # Check to the right of the piece
+        # Check to the right
         for i in range(xList.index(x) + 1, 8):
             if board[xList[i] + y]["piece"] == None:
                 moveableCoordinates.append(xList[i] + y)
@@ -61,7 +92,7 @@ class Piece:
                     moveableCoordinates.append(xList[i] + y)
                 break
         
-        # Check to the left of the piece
+        # Check to the left
         for i in range(xList.index(x) - 1, -1, -1):
             if board[xList[i] + y]["piece"] == None:
                 moveableCoordinates.append(xList[i] + y)
@@ -70,7 +101,7 @@ class Piece:
                     moveableCoordinates.append(xList[i] + y)
                 break
 
-        # Check above the piece
+        # Check above
         for i in range(yList.index(y) + 1, 8):
             if board[x + yList[i]]["piece"] == None:
                 moveableCoordinates.append(x + yList[i])
@@ -79,7 +110,7 @@ class Piece:
                     moveableCoordinates.append(x + yList[i])
                 break
 
-        # Check below the piece
+        # Check below
         for i in range(yList.index(y) - 1, -1, -1):
             if board[x + yList[i]]["piece"] == None:
                 moveableCoordinates.append(x + yList[i])
@@ -89,3 +120,4 @@ class Piece:
                 break
 
         return moveableCoordinates
+

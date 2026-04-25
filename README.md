@@ -1,57 +1,51 @@
-♟️ **Python Chess App (PyQt5 Implementation)**
-----------------------------------------------
+# PyChess Vanilla
 
-A fully functional, graphical Chess Application built from scratch using **Python** and **PyQt5**.
+> A fully functional chess application built from scratch — custom engine, no external logic libraries.
 
-Unlike standard chess apps that rely on libraries like python-chess for game logic, this project features a **custom-built chess engine**, demonstrating advanced Object-Oriented Programming (OOP) principles and algorithm design to handle move validation, board state management, and complex rules like Castling.
+[![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![PyQt5](https://img.shields.io/badge/GUI-PyQt5-41CD52?style=flat-square&logo=qt&logoColor=white)](https://riverbankcomputing.com/software/pyqt/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square)]()
 
-🚀 Features
------------
+---
 
-*   **Custom Game Engine:** All mechanics (move generation, legality checks, board representation) are implemented manually without external logic libraries.
-    
-*   **Modern GUI:** A responsive and interactive interface built with **PyQt5**.
-    
-*   **OOP Architecture:** Robust class hierarchy where every piece (Pawn, Rook, Knight...) inherits from a base Piece class with unique movement behaviors.
-    
-*   **Rule Implementation:**
-    
-    *   ✅ Legal Move Validation
-        
-    *   ✅ Check & Checkmate Detection
-        
-    *   ✅ Castling (King-side & Queen-side)
-        
-    *   ✅ Turn-based State Management
-        
-*   **Asset Integration:** Custom graphical assets for board and pieces.
-    
+## Overview
 
-🛠️ Technology Stack
---------------------
+PyChess Vanilla is a graphical chess application where every rule is implemented by hand — no python-chess, no external move generators, no logic shortcuts. Board state, move validation, check detection, and castling are all custom-built in pure Python.
 
-*   **Language:** Python 3.x
-    
-*   **GUI Framework:** PyQt5
-    
-*   **Logic:** Pure Python (Custom Algorithms)
-    
+The project follows a strict separation between the **visual layer** (PyQt5 board rendering) and the **logic layer** (game state, piece geometry, legality filtering), making the codebase extensible and easy to reason about.
 
-📂 Project Structure
---------------------
+> This engine serves as the foundation for [AlphaRes-Chess](https://github.com/Jessitoii/alphares-chess) — a dual-headed ResNet AI trained on top of this game loop.
 
-The project is structured to separate User Interface (UI) from Game Logic (Mechanics).
+---
 
-```text
+## Features
+
+- **Custom Chess Engine** — move generation, legality checks, and board state management implemented from scratch
+- **OOP Piece Hierarchy** — each piece inherits from a base `Piece` class and defines its own movement geometry
+- **Full Rule Coverage:**
+  - ✅ Legal move validation with check filtering
+  - ✅ Check & checkmate detection
+  - ✅ Castling (kingside & queenside)
+  - ✅ Turn-based state management
+  - 🔲 En passant *(planned)*
+  - 🔲 Pawn promotion dialog *(planned)*
+- **PyQt5 GUI** — responsive board widget with custom graphical assets
+
+---
+
+## Architecture
+
+```
 src/chess/
-├── main_window.py            # Application Entry Point
+├── main_window.py            # Application entry point
 ├── ui_components/
-│   ├── board.py              # Custom UI Widget for rendering the board
+│   ├── board.py              # Custom QWidget — board rendering & event handling
 │   └── round_widget.py       # Turn indicator widget
 └── mechanics/
-    ├── game.py               # Core Game Loop & Board State Manager
-    ├── piece.py              # Base Class for all pieces
-    └── pieces/               # Polymorphic Piece Implementations
+    ├── game.py               # Core game loop & board state manager
+    ├── piece.py              # Abstract base class for all pieces
+    └── pieces/               # Polymorphic piece implementations
         ├── king.py
         ├── queen.py
         ├── rook.py
@@ -60,47 +54,45 @@ src/chess/
         └── pawn.py
 ```
 
-⚙️ How It Works (Under the Hood)
---------------------------------
+### How It Works
 
-### 1\. Board Representation
+**Board Representation**
+The board is a dictionary keyed by coordinate strings (e.g. `"e4": piece_object`), enabling O(1) square lookups and straightforward state serialization.
 
-The board is managed as a dictionary-based coordinate system (e.g., "e4": {piece\_object}") within the Game class. This allows for O(1) lookups and flexible state management.
+**Move Validation**
+Each piece class computes its own pseudo-legal moves based on movement geometry. The `Game` class then filters these by simulating each candidate move and verifying the king is not left in check — no move tables, no magic bitboards.
 
-### 2\. Move Validation
+**UI / Logic Separation**
+User interactions on the board widget trigger events in the `Game` class. The `Game` class validates and executes the move, then signals the UI to re-render. The visual and logical boards are always kept in sync but never coupled.
 
-Instead of using a pre-built move generator, each piece class (src/chess/mechanics/pieces/) calculates its own pseudo-legal moves based on its geometry. The Game class then filters these moves by simulating them to ensure the King is not left in check.
+---
 
-### 3\. The "Mirror" Logic
+## Installation
 
-The application distinguishes between the **Visual Board** (UI) and the **Logical Board** (Backend). User interactions on the UI trigger events in the Game class, which validates the move before updating the UI state.
+```bash
+git clone https://github.com/Jessitoii/pychess-vanilla.git
+cd pychess-vanilla
+pip install PyQt5
+python src/chess/main_window.py
+```
 
-📥 Installation & Usage
------------------------
+---
 
-1.  ```bash
-    git clone https://github.com/yourusername/python-chess-app.gitcd python-chess-app
-    ```
-2. ```bash
-   Bashpip install PyQt5
-   ```
-    
-3.  ```bash
-    python src/chess/main\_window.py
-    ```
-    
+## Roadmap
 
-📸 Screenshots
---------------
+- [ ] En passant
+- [ ] Pawn promotion dialog
+- [ ] Draw conditions (stalemate already detected; fifty-move rule, threefold repetition pending)
+- [ ] PGN export
 
-<img width="811" height="841" alt="image" src="https://github.com/user-attachments/assets/eeb19393-6a04-46f5-b6fe-973675e461c9" />
+---
 
-🤝 Contribution
----------------
+## Related
 
-This project is open for educational purposes. Feel free to fork and improve the engine efficiency or add features like _En Passant_ or _Pawn Promotion_ UI dialogs.
+**[AlphaRes-Chess](https://github.com/Jessitoii/alphares-chess)** — a dual-headed ResNet (Policy + Value) AI engine built directly on top of this game loop, trained via Stockfish supervision.
 
-📝 License
-----------
+---
 
-This project is licensed under the MIT License.
+## License
+
+MIT
